@@ -1,6 +1,6 @@
 package WWW::Unfuddle::Project;
 use Moose;
-use Moose::Util::TypeConstraints; # XXX
+use WWW::Unfuddle::Meta::Types;
 
 has account_id => (
     is  => 'ro',
@@ -9,27 +9,30 @@ has account_id => (
 
 has archived => (
     is  => 'ro',
-    isa => 'Bool',
+    isa => 'WWW::Unfuddle::Bool',
+    coerce => 1,
 );
 
 has assignee_on_resolve => (
     is  => 'ro',
-    isa => enum(qw(reporter none nochange)),
+    isa => 'WWW::Unfuddle::Assignee',
 );
 
 has close_ticket_simultaneously_default => (
     is  => 'ro',
-    isa => 'Bool',
+    isa => 'WWW::Unfuddle::Bool',
+    coerce => 1,
 );
 
 has created_at => (
     is  => 'ro',
-    isa => 'DateTime',
+    isa => 'WWW::Unfuddle::DateTime',
+    coerce => 1,
 );
 
 has default_ticket_report_id => (
     is  => 'ro',
-    isa => 'Int',
+    isa => 'Maybe[Int]',
 );
 
 has description => (
@@ -44,7 +47,8 @@ has disk_usage => (
 
 has enable_time_tracking => (
     is  => 'ro',
-    isa => 'Bool',
+    isa => 'WWW::Unfuddle::Bool',
+    coerce => 1,
 );
 
 has id => (
@@ -59,7 +63,7 @@ has short_name => (
 
 has theme => (
     is  => 'ro',
-    isa => enum(qw(blue green grey orange purple red teal)),
+    isa => 'WWW::Unfuddle::ThemeColor',
 );
 
 has title => (
@@ -69,7 +73,8 @@ has title => (
 
 has updated_at => (
     is  => 'ro',
-    isa => 'DateTime',
+    isa => 'WWW::Unfuddle::DateTime',
+    coerce => 1,
 );
 
 __PACKAGE__->meta->make_immutable;
