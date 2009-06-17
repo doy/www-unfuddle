@@ -3,6 +3,8 @@ use Moose;
 use LWP::UserAgent;
 use JSON;
 
+use WWW::Unfuddle::Project;
+
 has username => (
     is       => 'ro',
     isa      => 'Str',
@@ -45,15 +47,27 @@ sub _api_url {
     return 'http://' . $self->_domain . '/api/v1/' . join('/', @path) . '.json';
 }
 
-sub list_projects {
+sub request {
     my $self = shift;
-    my $request = HTTP::Request->new(GET => $self->_api_url('projects'));
-    $request->header(Accept => 'application/json');
-    my $response = $self->ua->request($request);
-    my $projects = from_json($response->content);
-    for my $project (@$projects) {
-        print $project->{short_name}, "\n";
+    my ($method, @path) = @_;
+    my $req = HTTP::Request->new($method => $self->_api_url(@path));
+    $req->header(Accept => 'application/json');
+    my $resp = $self->ua->request($req);
+    if ($resp->code != 200) {
+        confess sprintf 'Error (%d): %s', $resp->code, $resp->content;
     }
+    return from_json($resp->content);
+}
+
+sub get {
+    my $self = shift;
+    $self->request(GET => @_);
+}
+
+sub projects {
+    my $self = shift;
+    return map { WWW::Unfuddle::Project->new($_) } @{ $self->get('projects') };
+
 }
 
 __PACKAGE__->meta->make_immutable;
